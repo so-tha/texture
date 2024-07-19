@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Three.js Exemplo</title>
+    <style>
+      /* Define o estilo da página HTML */
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+    <!-- Inclui a biblioteca Three.js -->
+    <script src="three/build/three.js"></script>
+  </head>
+  <body>
+    <script>
+      // Cria a cena Three.js
+      var scene = new THREE.Scene();
+      // Cria a câmera Three.js
+      var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+      // Cria o renderizador Three.js
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      // Adiciona o elemento DOM do renderizador à página HTML
+      document.body.appendChild(renderer.domElement);
+      // Cria a geometria Three.js
+      var geometry = new THREE.BoxGeometry();
+      // Cria o material Three.js
+      var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+      // Cria o objeto mesh Three.js
+      var cube = new THREE.Mesh(geometry, material);
+      // Adiciona o objeto mesh à cena
+      scene.add(cube);
+      // Define a posição da câmera Three.js
+      camera.position.z = 5;
+      // Cria o loop de animação Three.js
+      function animate() {
+        requestAnimationFrame(animate);
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+        renderer.render(scene, camera);
+      }
+      animate();
+    </script>
+  </body>
+</html>
+

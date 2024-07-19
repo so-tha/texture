@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Terra</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/three@latest/build/three.min.js"></script>
+    <script>
+      var scene = new THREE.Scene();
+      //A câmera perspectiva simula a forma como os objetos aparecem em um ambiente tridimensional.
+      var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+      //converte a cena e a câmera em imagens para serem exibidas no navegador.
+      var renderer = new THREE.WebGLRenderer();
+      //faz com que o tamanho da imagem final fique do mesmo tamanho da janela do navegador.
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);//anexo da cena no html
+
+      // Criando a Geometria de um plano mais a do sol 
+      var geometry_sphere = new THREE.SphereGeometry();
+      var geometry_plane = new THREE.PlaneGeometry(1,1);
+    
+    //textura da terra
+      const loader = new THREE.TextureLoader();
+      const texture_terra = loader.load( '/CompGrafica/terra2.jpg' );
+      texture_terra.colorSpace = THREE.SRGBColorSpace;//garante que as cores sejam exibidas corretamente
+      
+      const material_sphere_terra = new THREE.MeshBasicMaterial({
+        map: texture_terra, //Cria um material básico (MeshBasicMaterial) para aplicar no plano
+      });
+
+      //Textura do sol
+      const texture2 = loader.load( '/CompGrafica/sun.jpeg' );
+      texture2.colorSpace = THREE.SRGBColorSpace;
+      
+      const material_sphere_sol = new THREE.MeshBasicMaterial({
+        map: texture2,
+      });
+
+      var sphere1 = new THREE.Mesh(geometry_plane, material_sphere_terra); //malha do meu sol e da terra plana
+      var sphere2 = new THREE.Mesh(geometry_sphere, material_sphere_sol);
+
+      // Definindo tamanhos diferentes usando escala
+      //A escala é um vetor que define a ampliação ou redução do objeto em cada dimensão (x, y, z).
+      
+      sphere1.scale.set(1, 1, 1); 
+      sphere2.scale.set(1.5, 1.5, 1.5); 
+
+      scene.add(sphere1);//terra
+      scene.add(sphere2);//sol
+
+      //posicionando os eixos da camera
+
+      camera.position.z = 8;
+      camera.position.y= 2;
+      camera.position.x = 2;
+
+      function animate() {
+        
+        requestAnimationFrame(animate);
+
+        //rotacionando em torno do eixo y, para imitar o movimento de fato da terra
+        sphere1.rotation.y += 0.001;
+        sphere2.rotation.y += 0.001;
+        // Movendo o cubo em uma órbita circular
+        const radius = 3; // Raio da órbita
+        const speed = 0.001; // Velocidade menor da orbita para simular com mais realismo
+
+        sphere1.position.x = Math.cos(speed * Date.now() * 0.2) * radius;
+        //Math.cos ta calculando o valor do cosseno que aumenta com o tempo(Date.now) com a velocidade mais o fator de reajuste(sem ele a esfera gira muito mais rapido)
+        //Da como resultado um valor que fica entre -1 e 1, representando a posição horizontal da esfera.
+        sphere1.position.z = Math.sin(speed * Date.now() * 0.2) * radius;
+        //aqui a mesma coisa esta sendo feita só que na vertical
+        //radius multiplica o resultado pelo raio da órbita, oq dimensiona a posição da esfera
+
+        // Atualizando a câmera para olhar sempre para o centro da cena, nesse caso a orbita
+        camera.lookAt(scene.position);
+
+        renderer.render(scene, camera); //renderizando a cena, no caso gerando a imagem final
+      }
+      animate();
+    </script>
+  </body>
+</html>
+

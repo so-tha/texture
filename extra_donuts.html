@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donuts</title>
+    <style>
+        body {
+          margin: 0;
+          overflow: hidden;
+        }
+      </style>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/three@latest/build/three.min.js"></script>
+    <script>
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      var material_donuts = new THREE.MeshBasicMaterial({ color: 0x00ff00});
+      var geometry_donuts = new THREE.TorusGeometry();
+
+      armazena_donuts = [];
+
+
+        for(let i=0; i < 12; i++){
+        var donuts = new THREE.Mesh(geometry_donuts, material_donuts);
+
+        donuts.position.x = Math.random() * 10 - 5;
+        donuts.position.y = Math.random() * 10 - 4;
+        donuts.position.z = Math.random() * 10 - 3;
+
+
+        armazena_donuts.push(donuts)
+        scene.add(donuts);
+
+        } 
+            function updateDonuts() {
+            for (let i = 0; i < armazena_donuts.length; i++) {
+                armazena_donuts[i].position.y -= 0.1; // Ajuste a velocidade de queda conforme necessário
+                // Verifique se o donut caiu abaixo do plano da cena e o reposicione acima
+                if (armazena_donuts[i].position.y < -5) {
+                    armazena_donuts[i].position.y = Math.random() * 10 + 5;
+                    armazena_donuts[i].position.x = Math.random() * 10 - 5;
+                    armazena_donuts[i].position.z = Math.random() * 10 - 3;
+                }
+            }
+        }
+
+      camera.position.z = 8; //posiciona
+      camera.position.y= 2;
+      camera.position.x = 2;
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+
+            // Atualize as posições dos donuts
+            updateDonuts();
+        renderer.render(scene, camera);
+      }
+      animate();
+    </script>
+</body>
+</html>

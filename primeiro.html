@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Three.js Example</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/three@latest/build/three.min.js"></script>
+    <script>
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      var geometry_box = new THREE.BoxGeometry();
+      var geometry_plane = new THREE.PlaneGeometry(4,4);
+      var geometry_sphere = new THREE.SphereGeometry();
+
+      var material_cube = new THREE.MeshBasicMaterial({ color: 0x0000ff});
+      var material_plane = new THREE.MeshBasicMaterial({ color: 0x00ff00 });  
+      var material_sphere = new THREE.MeshBasicMaterial({ color: 0xff07ff }); 
+
+      var plane = new THREE.Mesh(geometry_plane,material_plane);
+      var sphere = new THREE.Mesh(geometry_sphere, material_sphere);
+      var cube = new THREE.Mesh(geometry_box, material_cube);
+
+      const axesHelper = new THREE.AxesHelper( 5 );
+      scene.add( axesHelper ); 
+
+      scene.add(cube);
+      scene.add(plane); //plano 
+      scene.add(sphere);
+
+      camera.position.z = 5; //posiciona
+      camera.position.y= 2;
+      camera.position.x = 2;
+    
+      camera.rotation.x = -0.1;
+      camera.rotation.y = 0.2;
+      camera.rotation.z = 0.05;
+
+      cube.position.z = -3;
+      cube.position.x = -4;
+      cube.position.y = 0.5;
+      cube.rotation.z = -0.3;
+
+      plane.position.x = 2.5;
+      plane.position.z = -2;
+      plane.position.y = 2;
+      plane.rotation.z = -0.2;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+        renderer.render(scene, camera);
+      }
+      animate();
+    </script>
+  </body>
+</html>
+
