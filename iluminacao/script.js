@@ -27,7 +27,7 @@ function addLight() {
     scene.add(ambientLight);
 
     // Luz direcional amarela
-    const directionalLight = new THREE.DirectionalLight(0xFFFF00, 0.5);
+    const directionalLight = new THREE.DirectionalLight(0xFFFF00, 0.9);
     directionalLight.position.set(0, 5, 0);
     scene.add(directionalLight);
 
@@ -47,9 +47,9 @@ function addLight() {
 let spotLights = [];
 addLight();
 
-const lambertMaterial = new THREE.MeshLambertMaterial({ color: 0xBEC6A0 });
-const phongMaterial = new THREE.MeshPhongMaterial({ color: 0xBEC6A0 });
-loadGLTFModel('./cat/scene.gltf', lambertMaterial, { x: -2.5, y: 1, z: 0 });
+const lambertMaterial = new THREE.MeshLambertMaterial({ color: 0xFEF3E2 });
+const phongMaterial = new THREE.MeshPhongMaterial({ color: 0xFEF3E2 });
+loadGLTFModel('./cat/scene.gltf', lambertMaterial, { x: -1.5, y: 1, z: 0 });
 loadGLTFModel('./cat/scene.gltf', phongMaterial, { x: 1.5, y: 1, z: 0 });
 
 function loadGLTFModel(url, material, position) {
@@ -64,6 +64,7 @@ function loadGLTFModel(url, material, position) {
         scene.add(gltf.scene);
     });
 }
+
 // Adicionando uma câmera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
@@ -109,6 +110,7 @@ function animate() {
         }
     });
 
+    controls.update();
     renderer.render(scene, camera);
 }
 
