@@ -12,7 +12,7 @@ let spotLightBlink = [true, true, true];
 function createPlane() {
     const plane = new THREE.Mesh(
         new THREE.PlaneGeometry(20, 20),
-        new THREE.MeshPhongMaterial({ color: 0xfffff, shininess: 10000 }),
+        new THREE.MeshPhongMaterial({ color: 0x606676, shininess: 10000 }),
     );
     plane.rotation.x = -Math.PI / 2;
     scene.add(plane);
@@ -47,9 +47,9 @@ function addLight() {
 let spotLights = [];
 addLight();
 
-const lambertMaterial = new THREE.MeshLambertMaterial({ color: 0x8AC });
-const phongMaterial = new THREE.MeshPhongMaterial({ color: 0xFFD700 });
-loadGLTFModel('./cat/scene.gltf', lambertMaterial, { x: -1.5, y: 1, z: 0 });
+const lambertMaterial = new THREE.MeshLambertMaterial({ color: 0xBEC6A0 });
+const phongMaterial = new THREE.MeshPhongMaterial({ color: 0xBEC6A0 });
+loadGLTFModel('./cat/scene.gltf', lambertMaterial, { x: -2.5, y: 1, z: 0 });
 loadGLTFModel('./cat/scene.gltf', phongMaterial, { x: 1.5, y: 1, z: 0 });
 
 function loadGLTFModel(url, material, position) {
@@ -64,13 +64,11 @@ function loadGLTFModel(url, material, position) {
         scene.add(gltf.scene);
     });
 }
-
-
 // Adicionando uma câmera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
-camera.position.x = -1;
-camera.position.y = 6;
+camera.position.x = 2;
+camera.position.y = 5;
 
 const controls = new THREE.TrackballControls(camera, renderer.domElement);
 controls.rotateSpeed = 2.0;
