@@ -1,10 +1,28 @@
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer();
+let scene = new THREE.Scene();
+let renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 15;
 camera.position.set(3, 3, 3);
 camera.lookAt(0, 0, 0);
+
+let spotLightMovementRight = true; // se for true vai pra direita e se for false vai pra esquerda
+const spotLight = new THREE.SpotLight(0xfffff); // Definir a cor depois
+
+// Criando o plano
+function createPlane() {
+    const geometry = new THREE.PlaneGeometry(100, 100, 20, 20);
+    const material = new THREE.MeshBasicMaterial({
+        color: 0x00000,
+        wireframe: false,
+        side: THREE.DoubleSide // DoubleSide faz ser possível ver o plano em todos os lados
+    });
+    const plane = new THREE.Mesh(geometry, material);
+    scene.add(plane);
+}
+
 
 const controls = new THREE.TrackballControls(camera, renderer.domElement);
 controls.rotateSpeed = 2.0;

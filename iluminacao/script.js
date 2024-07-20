@@ -1,107 +1,107 @@
+// Configurando a cena e o renderizador
 let scene = new THREE.Scene();
 let renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-let spotLightMovementRight = true; // se for true vai pra direita e se for false vai pra esquerda
-const spotLight = new THREE.SpotLight(0xfffff); // Definir a cor depois
+// Variáveis para movimentação e piscagem das luzes
+let spotLightMovementRight = [true, true, true];
+let spotLightBlink = [true, true, true];
 
 // Criando o plano
 function createPlane() {
-    const geometry = new THREE.PlaneGeometry(100, 100, 20, 20);
-    const material = new THREE.MeshBasicMaterial({
-        color: 0x00000,
-        wireframe: false,
-        side: THREE.DoubleSide // DoubleSide faz ser possível ver o plano em todos os lados
-    });
-    const plane = new THREE.Mesh(geometry, material);
-
-
+    const plane = new THREE.Mesh(
+        new THREE.PlaneGeometry(20, 20),
+        new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 10000 }),
+    );
+    plane.rotation.x = -Math.PI / 2;
     scene.add(plane);
 }
 
-function addPerspectiveCamera() {
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    //Primeiro é o campo de visão
-    //near and far, define os objetos que não seram renderizados.
-}
-// Objeto que interage com a luz
-function createTorusKnot() {
-    const geometry = new THREE.TorusKnotGeometry();
-    const materialLambert = new THREE.MeshLambertMaterial();
-
-    const torusKnot = new THREE.Mesh(geometry, materialLambert);
-
-    torusKnot.position.x = 2;
-    torusKnot.position.y = 6;
-    torusKnot.position.z = 2;
-
-    scene.add(torusKnot);
-}
-
 createPlane();
-createTorusKnot();
 
 // Luzes
 function addLight() {
-
-    spotLight.position.set(0, 20, 0); // No alto
-    spotLight.castShadow = true; // Possui sombra
-    scene.add(spotLight);
-
-    const spotLightHelper = new THREE.SpotLightHelper(spotLight);
-    scene.add(spotLightHelper);
-}
-
-function addAmbientLight() {
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+    // Luz ambiente branca
+    const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.2);
     scene.add(ambientLight);
+
+    // Luz direcional amarela
+    const directionalLight = new THREE.DirectionalLight(0xFFFF00, 0.5);
+    directionalLight.position.set(0, 5, 0);
+    scene.add(directionalLight);
+
+    // Luzes coloridas (vermelho, verde e azul)
+    const colors = [0xFF0000, 0x00FF00, 0x0000FF];
+    const positions = [[-3, 3, 0], [0, 3, 0], [3, 3, 0]];
+    for (let i = 0; i < 3; i++) {
+        const spotLight = new THREE.SpotLight(colors[i], 2);
+        spotLight.position.set(...positions[i]);
+        spotLight.angle = Math.PI / 6;
+        spotLight.penumbra = 0.1;
+        scene.add(spotLight);
+        spotLights.push(spotLight);
+    }
 }
 
-addAmbientLight();
+let spotLights = [];
 addLight();
 
-// Cria o "reflexo" de luz
-function createDodecahedron() {
-    const dodeGeometry = new THREE.DodecahedronGeometry(7, 1);
-    const materialPhong = new THREE.MeshPhongMaterial({
-        color: 0x58b33a,
-        specular: 0xffffff,
-        shininess: 30,
-        flatShading: false
+const lambertMaterial = new THREE.MeshLambertMaterial({ color: 0x8AC });
+const phongMaterial = new THREE.MeshPhongMaterial({ color: 0xFFD700 });
+loadGLTFModel('./cat/scene.gltf', lambertMaterial, { x: -1.5, y: 1, z: 0 });
+loadGLTFModel('./cat/scene.gltf', phongMaterial, { x: 1.5, y: 1, z: 0 });
+
+function loadGLTFModel(url, material, position) {
+    const loader = new THREE.GLTFLoader();
+    loader.load(url, function(gltf) {
+        gltf.scene.traverse(function(node) {
+            if (node.isMesh) {
+                node.material = material;
+            }
+        });
+        gltf.scene.position.set(position.x, position.y, position.z);
+        scene.add(gltf.scene);
     });
-
-    const dodecahedron = new THREE.Mesh(dodeGeometry, materialPhong);
-
-    dodecahedron.position.x = 8;
-    dodecahedron.position.y = 6;
-    dodecahedron.position.z = 2;
-    dodecahedron.scale.set(0.25, 0.25, 0.25);
-
-    scene.add(dodecahedron);
 }
 
-createDodecahedron();
 
 // Adicionando uma câmera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 15;
 
+// Função de animação
 function animate() {
     requestAnimationFrame(animate);
 
-    // Efeito da luz de baladinha
-    if (spotLightMovementRight) {
-        spotLight.position.x += 1;
-    } else {
-        spotLight.position.x -= 1;
-    }
+    // Movimentação e piscagem das luzes
+    spotLights.forEach((spotLight, index) => {
+        // Movimentação
+        if (spotLightMovementRight[index]) {
+            spotLight.position.x += 0.1;
+        } else {
+            spotLight.position.x -= 0.1;
+        }
 
-    if (spotLight.position.x > 20) {
-        spotLightMovementRight = false;
-    } else if (spotLight.position.x < -20) {
-        spotLightMovementRight = true;
-    }
+        if (spotLight.position.x > 5) {
+            spotLightMovementRight[index] = false;
+        } else if (spotLight.position.x < -5) {
+            spotLightMovementRight[index] = true;
+        }
+
+        // Piscagem das luzes
+        if (spotLightBlink[index]) {
+            spotLight.intensity += 0.1;
+        } else {
+            spotLight.intensity -= 0.1;
+        }
+
+        if (spotLight.intensity > 3) {
+            spotLightBlink[index] = false;
+        } else if (spotLight.intensity < 0.5) {
+            spotLightBlink[index] = true;
+        }
+    });
 
     renderer.render(scene, camera);
 }
