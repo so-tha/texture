@@ -12,7 +12,7 @@ let spotLightBlink = [true, true, true];
 function createPlane() {
     const plane = new THREE.Mesh(
         new THREE.PlaneGeometry(20, 20),
-        new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 10000 }),
+        new THREE.MeshPhongMaterial({ color: 0xfffff, shininess: 10000 }),
     );
     plane.rotation.x = -Math.PI / 2;
     scene.add(plane);
@@ -68,7 +68,15 @@ function loadGLTFModel(url, material, position) {
 
 // Adicionando uma câmera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 15;
+camera.position.z = 5;
+camera.position.x = -1;
+camera.position.y = 6;
+
+const controls = new THREE.TrackballControls(camera, renderer.domElement);
+controls.rotateSpeed = 2.0;
+controls.zoomSpeed = 4;
+controls.panSpeed = 0.8;
+controls.staticMoving = true;
 
 // Função de animação
 function animate() {
