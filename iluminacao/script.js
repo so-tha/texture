@@ -45,14 +45,14 @@ function addLight() {
 }
 
 let spotLights = [];
+let lambertObject, phongObject;
+let angle = 0;
 addLight();
 
 const lambertMaterial = new THREE.MeshLambertMaterial({ color: 0xFEF3E2 });
 const phongMaterial = new THREE.MeshPhongMaterial({ color: 0xFEF3E2 });
-loadGLTFModel('./cat/scene.gltf', lambertMaterial, { x: -1.5, y: 1, z: 0 });
-loadGLTFModel('./cat/scene.gltf', phongMaterial, { x: 1.5, y: 1, z: 0 });
 
-function loadGLTFModel(url, material, position) {
+function loadGLTFModel(url, material, position, callback) {
     const loader = new THREE.GLTFLoader();
     loader.load(url, function(gltf) {
         gltf.scene.traverse(function(node) {
@@ -62,8 +62,17 @@ function loadGLTFModel(url, material, position) {
         });
         gltf.scene.position.set(position.x, position.y, position.z);
         scene.add(gltf.scene);
+        callback(gltf.scene);
     });
 }
+
+loadGLTFModel('./cat/scene.gltf', lambertMaterial, { x: -1.5, y: 1, z: 0 }, function(object) {
+    lambertObject = object;
+});
+
+loadGLTFModel('./cat/scene.gltf', phongMaterial, { x: 1.5, y: 1, z: 0 }, function(object) {
+    phongObject = object;
+});
 
 // Adicionando uma câmera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -98,17 +107,27 @@ function animate() {
 
         // Piscagem das luzes
         if (spotLightBlink[index]) {
-            spotLight.intensity += 0.1;
+            spotLight.intensity += 0.6;
         } else {
-            spotLight.intensity -= 0.1;
+            spotLight.intensity -= 0.6;
         }
 
-        if (spotLight.intensity > 3) {
+        if (spotLight.intensity > 8) {
             spotLightBlink[index] = false;
         } else if (spotLight.intensity < 0.5) {
             spotLightBlink[index] = true;
         }
     });
+
+    // Gatinhos orbitando
+    if (lambertObject && phongObject) {
+        angle += 0.04;
+        let radius = 2;
+        lambertObject.position.x = radius * Math.cos(angle);
+        lambertObject.position.z = radius * Math.sin(angle);
+        phongObject.position.x = radius * Math.cos(angle + Math.PI);
+        phongObject.position.z = radius * Math.sin(angle + Math.PI);
+    }
 
     controls.update();
     renderer.render(scene, camera);
