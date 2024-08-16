@@ -1,0 +1,12 @@
+body{
+    background-color: black;
+    margin: 0;
+    overflow: hidden;
+}
+.option, ul {
+    display: flex;
+    margin-right: 10px;
+}
+label{
+    color: blanchedalmond;
+}
